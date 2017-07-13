@@ -13,72 +13,89 @@
 
   <div class="container">
     <div class="jumbotron text-center">
-      <h1 class="glyphicon glyphicon-fire">Hot Restaurant</h1>
-      <h3>We<span id="tableNumber"> only have 5 tables!</span> Book your seat before they are all gone!</h3>
+       <h1><span class="glyphicon glyphicon-fire"></span> Hot Restaurant</h1>
+      <h3>Current Reservation and Waiting List</h3>
       <hr>
-      <a href="/add"><button type="button" class="btn btn-danger btn-lg"><span class="glyphicon glyphicon-list-alt"></span> View Tables</button></a>
-       <a href="/add"><button type="button" class="btn btn-danger btn-lg"><span class="glyphicon glyphicon-credit-card"></span> Make Reservation</button></a>
+       <a href="/reserve"><button type="button" class="btn btn-danger btn-lg"><span class="glyphicon glyphicon-credit-card"></span> Make Reservation</button></a>
+        <a href="/"><button type="button" class="btn btn-default btn-lg"><span class="glyphicon glyphicon-home"></span></button></a>
     </div>
+
+        <div class="row">
+			<div class="col-lg-12">
+
+				<!-- Current Tables in Use -->
+				<div class="panel panel-default">
+					<div class="panel-heading">
+						<h4 class="panel-title">Current Reservations</h4>
+					</div>
+					<div class="panel-body" id="tableSection">
+					</div>
+				</div>
+
+				<!-- Waiting List Panel -->
+				<div class="panel panel-default">
+					<div class="panel-heading">
+						<h4 class="panel-title">Waiting List</h4>
+					</div>
+					<div class="panel-body" id="waitlistSection">
+					</div>
+				</div>
+			</div>
+		</div>
+
+
+
+
+    <a id="morganClear" href="/api/cleartables">Clear Table</a>
+    <span>|</span>   
+    <a href="/api/tables">API Table Link</a>
+    <span>|</span>
+    <a href="/api/waitlist">API Wait List</a>
+    <br>
+
+
+
+
+
+
+
     
     </div>
-    <div class="row">
-
-      <div class="col-lg-12">
-
-        <div class="panel panel-default">
-          <div class="panel-heading">
-            <h3 class="panel-title"><strong>Character Search</strong></h3>
-          </div>
-          <div class="panel-body">
-            <input type="text" id="character-search" class="form-control">
-            <br>
-            <div class="text-right">
-              <button type="submit" class="btn btn-primary btn-md" id="search-btn"><span class="glyphicon glyphicon-search"></span> Search Your Feelings. You know it is true.</button>
-
-            </div>
-          </div>
-        </div>
-
-        <div class="panel panel-default">
-          <div class="panel-heading">
-            <h3 class="panel-title"><strong>Character Statistics</strong></h3>
-          </div>
-          <div class="panel-body">
-            <div class="well">
-              <h2 id="name">Yoda</h2>
-              <div id="stats">
-                <h3><strong>Role:</strong> <span id="role">Jedi Master</span></h3>
-                <h3><strong>Age:</strong> <span id="age">900</span></h3>
-                <h3><strong>Force Points:</strong> <span id="force-points">2000</span></h3>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
+    
+ 
 
   <script type="text/javascript">
-    $("#search-btn").on("click", function() {
-      var searchedCharacter = $("#character-search").val().trim();
+    $("#morganClear").on("click", function() {
+        alert("Morgan is clearing tables....!!!")
+    })
 
-      searchedCharacter = searchedCharacter.replace(/\s+/g, "").toLowerCase();
+      $.get("/api/tables", function(data) {
+    
+        if(data.length > 0) {
+             for (var i =0; i < data.length; i++) {
+            
+            $("#tableSection").append("<div class='well'><h2><span class='label label-primary'>"+(i + 1)+"</span> | "+data[i].name+"</h2></div>")
+           
+        }
 
-      $.get("/api/" + searchedCharacter, function(data) {
-        console.log(data);
-        if (data) {
-          $("#stats").show();
-          $("#name").text(data.name);
-          $("#role").text(data.role);
-          $("#age").text(data.age);
-          $("#force-points").text(data.forcePoints);
         }
-        else {
-          $("#name").text("The force is not strong with this one. Your character was not found.");
-          $("#stats").hide();
-        }
+       
+      
       });
-    });
+      
+         $.get("/api/waitlist", function(data) {
+        // console.log(data);
+        if (data.length > 0 ) {
+        for (var i =0; i < data.length; i++) {
+            $("#waitlistSection").append("<div class='well'><h2><span class='label label-primary'>"+(i + 1)+"</span> | "+data[i].name+"</h2></div>")
+           
+        }
+        }
+      
+      });
+      
+      
+ 
   </script>
 </body>
 </html>
